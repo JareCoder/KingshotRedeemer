@@ -1,5 +1,5 @@
 from typing import Any
-from playwright.sync_api import sync_playwright
+from playwright.async_api import async_playwright
 
 def perform_giftcode_redeem(player_id: str, gift_code: str, page: Any):
     page.fill("input[placeholder='Player ID']", player_id)
@@ -34,14 +34,14 @@ def perform_giftcode_redeem(player_id: str, gift_code: str, page: Any):
     finally:
         page.click("div.exit_con")
 
-def redeem_giftcode_for_all_players(player_ids: list, gift_code: str):
+async def redeem_giftcode_for_all_players(player_ids: list, gift_code: str):
     results = []
 
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
-        page = browser.new_page()
+    async with async_playwright() as p:
+        browser = await p.chromium.launch(headless=True)
+        page = await browser.new_page()
 
-        page.goto("https://ks-giftcode.centurygame.com/")
+        await page.goto("https://ks-giftcode.centurygame.com/")
 
         for player_id in player_ids:
             result = perform_giftcode_redeem(player_id, gift_code, page)
@@ -52,7 +52,7 @@ def redeem_giftcode_for_all_players(player_ids: list, gift_code: str):
             
             results.append({"player_id": player_id, "result": result})
 
-        browser.close()
+        await browser.close()
         return results
 
 if __name__ == "__main__":
