@@ -13,7 +13,7 @@ async def main():
 
     if not discord_token:
         print("❌ Error: DISCORD_TOKEN environment variable is not set.")
-        print("Please set it using: $env:DISCORD_TOKEN='your_token_here'")
+        print("Please set it in the .env file or your environment.")
         sys.exit(1)
     
     print("🚀 Starting Kingshot Redeemer Bot...")
