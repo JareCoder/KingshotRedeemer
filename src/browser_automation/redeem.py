@@ -1,5 +1,5 @@
 from typing import Any, List, Dict
-from playwright.async_api import async_playwright, TimeoutError
+from playwright.async_api import async_playwright, TimeoutError as PlaywrightTimeoutError
 
 async def perform_giftcode_redeem(player_id: str, gift_code: str, page: Any) -> Dict[str, Any]:
     await page.fill("input[placeholder='Player ID']", player_id)
@@ -25,7 +25,7 @@ async def perform_giftcode_redeem(player_id: str, gift_code: str, page: Any) -> 
             "success": "success" in modal_text.lower(),
             "message": modal_text,
         }
-    except TimeoutError:
+    except (PlaywrightTimeoutError, TimeoutError):
         return {"success": False, "message": "No confirmation modal appeared."}
     finally:
         # Attempt to close the modal or exit
