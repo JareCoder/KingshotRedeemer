@@ -1,41 +1,41 @@
-from typing import Any
-from playwright.async_api import async_playwright
+from typing import Any, List, Dict
+from playwright.async_api import async_playwright, TimeoutError
 
-def perform_giftcode_redeem(player_id: str, gift_code: str, page: Any):
-    page.fill("input[placeholder='Player ID']", player_id)
-    page.click("div.btn.login_btn")
-    page.wait_for_timeout(2000)
+async def perform_giftcode_redeem(player_id: str, gift_code: str, page: Any) -> Dict[str, Any]:
+    await page.fill("input[placeholder='Player ID']", player_id)
+    await page.click("div.btn.login_btn")
+    await page.wait_for_timeout(2000)
 
-    player_nick = page.inner_text("p.name")
+    player_nick = await page.inner_text("p.name")
     print("Trying to redeem for player:", player_nick)
 
-    page.fill("input[placeholder='Enter Gift Code']", gift_code)
-    page.click("div.btn.exchange_btn")
-    page.wait_for_timeout(2000)
+    await page.fill("input[placeholder='Enter Gift Code']", gift_code)
+    await page.click("div.btn.exchange_btn")
+    await page.wait_for_timeout(2000)
 
-
-    # Handle confirmation modal
     try:
-        page.wait_for_selector("div.message_modal", timeout=5000)
-        modal_text = page.inner_text("div.modal_content .msg")
+        await page.wait_for_selector("div.message_modal", timeout=5000)
+        modal_text = await page.inner_text("div.modal_content .msg")
         print("Redemption result:", modal_text)
 
-        page.click("div.confirm_btn")
+        await page.click("div.confirm_btn")
 
         return {
             "player_nick": player_nick,
             "success": "success" in modal_text.lower(),
-            "message": modal_text
+            "message": modal_text,
         }
-
     except TimeoutError:
         return {"success": False, "message": "No confirmation modal appeared."}
-
     finally:
-        page.click("div.exit_con")
+        # Attempt to close the modal or exit
+        try:
+            await page.click("div.exit_con")
+        except Exception:
+            pass
 
-async def redeem_giftcode_for_all_players(player_ids: list, gift_code: str):
-    results = []
+async def redeem_giftcode_for_all_players(player_ids: List[str], gift_code: str) -> List[Dict[str, Any]]:
+    results: List[Dict[str, Any]] = []
 
     async with async_playwright() as p:
         browser = await p.chromium.launch(headless=True)
@@ -44,20 +44,8 @@ async def redeem_giftcode_for_all_players(player_ids: list, gift_code: str):
         await page.goto("https://ks-giftcode.centurygame.com/")
 
         for player_id in player_ids:
-            result = perform_giftcode_redeem(player_id, gift_code, page)
-            result_message = result.get("message")
-            
-            #if result_message == "Gift Code not found, this is case-sensitive!":
-            #    return "Gift code not found, stopping further attempts."
-            
+            result = await perform_giftcode_redeem(player_id, gift_code, page)
             results.append({"player_id": player_id, "result": result})
 
         await browser.close()
         return results
-
-if __name__ == "__main__":
-    # Example test run
-    print("Starting test redemption...")
-    player_list = ["48666532", "46864326"]
-    res = redeem_giftcode_for_all_players(player_list, "KSFB15K")
-    print("Test redemption result:", res)
