@@ -1,1 +1,2 @@
-playwright==1.48.0
+playwright==1.57.0
+discord.py==2.6.4
