@@ -45,7 +45,7 @@ async def redeem_giftcode_for_all_players(player_ids: List[str], gift_code: str)
 
         for player_id in player_ids:
             result = await perform_giftcode_redeem(player_id, gift_code, page)
-            results.append({"player_id": player_id, "result": result})
+            results.append({"player_id": player_id, "result": result, "success": result.get("success", False)})
 
         await browser.close()
         return results

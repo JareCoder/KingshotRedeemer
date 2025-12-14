@@ -36,20 +36,24 @@ def init_bot(token: str) -> discord.Client:
         try:
             player_ids = load_players()
             results = await redeem_giftcode_for_all_players(player_ids, gift_code)
+            failed = 0
             
-            # Build response
-            lines = [f"🎁 **Redeem Results for `{gift_code}`**\n"]
+            # Discord message
+            failed_players = []
             for item in results:
-                player_id = item.get("player_id", "Unknown")
+                success = item.get("success")
+                if success:
+                    continue
                 result = item.get("result", {})
+                player_id = item.get("player_id", "Unknown")
                 player_nick = result.get("player_nick", "N/A")
-                success = result.get("success", False)
                 message = result.get("message", "No message")
-                
-                status = "✅" if success else "❌"
-                lines.append(f"{status} `{player_id}` ({player_nick}): {message}")
+                failed += 1
+
+                failed_players.append(f"❌ `{player_id}` ({player_nick}): {message}")
             
-            response_message = "\n".join(lines)
+            response_message = f"🎁 **Redeem Results for `{gift_code}`**\n📋`{len(results) - failed}/{len(results)}` succeeded!\n\n"
+            response_message += "\n".join(failed_players)
             
             # Discord message limit safety
             if len(response_message) > 1900:
