@@ -42,7 +42,6 @@ async def perform_giftcode_redeem(player_id: str, gift_code: str, page: Any) -> 
     except (PlaywrightTimeoutError, TimeoutError):
         return {"success": False, "message": "No confirmation modal appeared."}
     finally:
-        # Attempt to close the modal or exit
         try:
             await page.click("div.exit_con")
         except Exception:
