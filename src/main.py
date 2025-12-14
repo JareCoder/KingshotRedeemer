@@ -1,25 +1,20 @@
 import asyncio
 import sys
-import os
 
+from config.config import DISCORD_TOKEN, TIMEOUT_MS  # noqa: E402
 from dcBot.ksRedeemBot import start_bot  # noqa: E402
-from dotenv import load_dotenv
 
 
 async def main():
-    load_dotenv()
-
-    discord_token = os.getenv("DISCORD_TOKEN")
-
-    if not discord_token:
-        print("❌ Error: DISCORD_TOKEN environment variable is not set.")
-        print("Please set it in the .env file or your environment.")
+    print("🚀 Starting Kingshot Redeemer Bot...")
+    print(f"⏱️  Timeout set to {TIMEOUT_MS}ms")
+    
+    if DISCORD_TOKEN is None:
+        print("❌ DISCORD_TOKEN is not set")
         sys.exit(1)
     
-    print("🚀 Starting Kingshot Redeemer Bot...")
-    
     try:
-        await start_bot(discord_token)
+        await start_bot(DISCORD_TOKEN)
     except KeyboardInterrupt:
         print("\n👋 Bot stopped by user")
     except Exception as e:
