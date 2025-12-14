@@ -1,20 +1,21 @@
 from typing import Any, List, Dict
 from playwright.async_api import async_playwright, TimeoutError as PlaywrightTimeoutError
+from config.config import TIMEOUT_MS
 
 async def perform_giftcode_redeem(player_id: str, gift_code: str, page: Any) -> Dict[str, Any]:
     await page.fill("input[placeholder='Player ID']", player_id)
     await page.click("div.btn.login_btn")
-    await page.wait_for_timeout(2000)
+    await page.wait_for_timeout(TIMEOUT_MS)
 
     player_nick = await page.inner_text("p.name")
     print("Trying to redeem for player:", player_nick)
 
     await page.fill("input[placeholder='Enter Gift Code']", gift_code)
     await page.click("div.btn.exchange_btn")
-    await page.wait_for_timeout(2000)
+    await page.wait_for_timeout(TIMEOUT_MS)
 
     try:
-        await page.wait_for_selector("div.message_modal", timeout=5000)
+        await page.wait_for_selector("div.message_modal", timeout=TIMEOUT_MS*10)
         modal_text = await page.inner_text("div.modal_content .msg")
         print("Redemption result:", modal_text)
 
