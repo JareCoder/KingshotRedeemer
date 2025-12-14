@@ -51,7 +51,7 @@ def register_redeem_command(
 
             response_message = (
                 f"🎁 **Redeem Results for `{gift_code}`**\n"
-                f"🚀`{len(results) - failed}/{len(results)}` succeeded!\n\n"
+                f"🚀 `{len(results) - failed}/{len(results)}` succeeded!\n\n"
             )
             response_message += "\n".join(failed_players)
             if updated:

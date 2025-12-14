@@ -22,7 +22,7 @@ async def perform_giftcode_redeem(player_id: str, gift_code: str, page: Any) -> 
 
         return {
             "player_nick": player_nick,
-            "success": "success" in modal_text.lower(),
+            "success": "Redeemed, please claim the rewards in your mail!".lower() in modal_text.lower(),
             "message": modal_text,
         }
     except (PlaywrightTimeoutError, TimeoutError):
@@ -57,15 +57,25 @@ async def redeem_giftcode_for_all_players(players: List[Dict[str, str]], gift_co
                     "errorCode": "INVALID_CODE",
                     "message": "Invalid gift code.",
                 })
+
                 return results
             
-            results.append({
-                "player_id": player_id,
-                "stored_player_nick": stored_nick,
-                "page_player_nick": page_nick,
-                "result": result,
-                "success": result.get("success", False),
-            })
+            elif result_message == "The same Gift Code type can only be redeemed once!" or result_message == "Already claimed, unable to claim again.":
+                results.append({
+                    "player_id": player_id,
+                    "stored_player_nick": stored_nick,
+                    "page_player_nick": page_nick,
+                    "result": result,
+                    "success": True,
+                })
+            else:
+                results.append({
+                    "player_id": player_id,
+                    "stored_player_nick": stored_nick,
+                    "page_player_nick": page_nick,
+                    "result": result,
+                    "success": result.get("success", False),
+                })
 
         await browser.close()
         return results
