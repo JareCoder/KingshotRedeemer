@@ -49,7 +49,16 @@ async def redeem_giftcode_for_all_players(players: List[Dict[str, str]], gift_co
 
             result = await perform_giftcode_redeem(player_id, gift_code, page)
             page_nick = result.get("player_nick")
+            result_message = result.get("message")
 
+            if result_message == "Gift Code not found, this is case-sensitive!":
+                results.append({
+                    "success": False,
+                    "errorCode": "INVALID_CODE",
+                    "message": "Invalid gift code.",
+                })
+                return results
+            
             results.append({
                 "player_id": player_id,
                 "stored_player_nick": stored_nick,

@@ -24,6 +24,12 @@ def register_redeem_command(
 
             failed_players = []
             for idx, item in enumerate(results):
+                error_code = item.get("errorCode", "")
+                if error_code == "INVALID_CODE":
+                    failed += 1
+                    failed_players.append(f"❌ Invalid gift code.")
+                    break
+
                 # Keep player nicknames synced for readability
                 page_nick = item.get("page_player_nick")
                 stored_nick = item.get("stored_player_nick")
