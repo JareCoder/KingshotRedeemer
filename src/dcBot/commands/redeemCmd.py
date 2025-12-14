@@ -10,7 +10,6 @@ def register_redeem_command(
     load_players: Callable[[], List[Dict[str, Any]]],
     save_players: Callable[[List[Dict[str, Any]]], None],
 ):
-    """Register the /redeem slash command on the provided command tree."""
 
     @tree.command(name="redeem", description="Redeem a Kingshot gift code for all players")
     @app_commands.describe(gift_code="The gift code to redeem")
@@ -46,7 +45,7 @@ def register_redeem_command(
 
             response_message = (
                 f"🎁 **Redeem Results for `{gift_code}`**\n"
-                f"📋`{len(results) - failed}/{len(results)}` succeeded!\n\n"
+                f"🚀`{len(results) - failed}/{len(results)}` succeeded!\n\n"
             )
             response_message += "\n".join(failed_players)
             if updated:
