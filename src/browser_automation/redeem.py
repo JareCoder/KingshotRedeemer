@@ -7,6 +7,19 @@ async def perform_giftcode_redeem(player_id: str, gift_code: str, page: Any) -> 
     await page.click("div.btn.login_btn")
     await page.wait_for_timeout(TIMEOUT_MS)
 
+    # Handle failed login with busy server message
+    try:
+        await page.wait_for_selector("div.message_modal", timeout=TIMEOUT_MS*5)
+        login_modal_text = await page.inner_text("div.modal_content .msg", timeout=TIMEOUT_MS)
+        if "Server busy. Please try again later." in login_modal_text:
+            await page.click("div.confirm_btn")
+            return {
+                "success": False, 
+                "message": "Problem with logging in. Double check player ID."
+            }
+    except (PlaywrightTimeoutError, TimeoutError):
+        pass
+
     player_nick = await page.inner_text("p.name")
     print("Trying to redeem for player:", player_nick)
 
@@ -15,8 +28,8 @@ async def perform_giftcode_redeem(player_id: str, gift_code: str, page: Any) -> 
     await page.wait_for_timeout(TIMEOUT_MS)
 
     try:
-        await page.wait_for_selector("div.message_modal", timeout=TIMEOUT_MS*10)
-        modal_text = await page.inner_text("div.modal_content .msg")
+        await page.wait_for_selector("div.message_modal", timeout=TIMEOUT_MS*5)
+        modal_text = await page.inner_text("div.modal_content .msg", timeout=TIMEOUT_MS)
         print("Redemption result:", modal_text)
 
         await page.click("div.confirm_btn")
