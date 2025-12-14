@@ -50,7 +50,7 @@ def register_redeem_command(
             response_message += "\n".join(failed_players)
             if updated:
                 save_players(players)
-                response_message += "\n\n💾 Updated player names from page"
+                response_message += "\n\n💾 Updated player names from Kingshot page"
 
             if len(response_message) > 1900:
                 response_message = response_message[:1900] + "\n…(truncated)"
