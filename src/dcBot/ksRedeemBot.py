@@ -3,10 +3,13 @@ import os
 import discord
 from discord import app_commands
 
+from dcBot.commands.redeemCmd import register_redeem_command  # noqa: E402
+from dcBot.commands.listCmd import register_list_command  # noqa: E402
+
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "data"))
 
-from dcBot.commands.redeemCmd import register_redeem_command  # noqa: E402
+
 
 
 def load_players():
@@ -31,6 +34,7 @@ def init_bot(token: str) -> discord.Client:
 
     # Register commands
     register_redeem_command(tree, load_players, save_players)
+    register_list_command(tree, load_players)
     
     @client.event
     async def on_ready():
