@@ -7,11 +7,15 @@ services:
     restart: unless-stopped
     environment:
       - DISCORD_TOKEN=${DISCORD_TOKEN}
-      - TIMEOUT_MS=${TIMEOUT_MS:-5000}
+      - TIMEOUT_MS=${TIMEOUT_MS}
     volumes:
-      - ./src/data:/app/data
+      - kingshot-data:/app/data
     networks:
       - bot-network
+
+volumes:
+  kingshot-data:
+    name: kingshot-data
 
 networks:
   bot-network:
