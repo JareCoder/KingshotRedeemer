@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  kingshot-redeemer:
+    build: .
+    container_name: kingshot-redeemer-bot
+    restart: unless-stopped
+    environment:
+      - DISCORD_TOKEN=${DISCORD_TOKEN}
+      - TIMEOUT_MS=${TIMEOUT_MS:-5000}
+    volumes:
+      - ./src/data:/app/data
+    networks:
+      - bot-network
+
+networks:
+  bot-network:
+    driver: bridge
