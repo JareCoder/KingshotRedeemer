@@ -15,6 +15,12 @@ def load_players():
         return json.load(f)["players"]
 
 
+def save_players(players):
+    players_file = os.path.join(DATA_DIR, "players.json")
+    with open(players_file, "w", encoding="utf-8") as f:
+        json.dump({"players": players}, f, indent=4)
+
+
 def init_bot(token: str) -> discord.Client:
     if not token:
         raise ValueError("Discord token cannot be empty")
@@ -34,16 +40,25 @@ def init_bot(token: str) -> discord.Client:
         await interaction.response.defer(thinking=True)
         
         try:
-            player_ids = load_players()
-            results = await redeem_giftcode_for_all_players(player_ids, gift_code)
+            players = load_players()
+            results = await redeem_giftcode_for_all_players(players, gift_code)
             failed = 0
+            updated = False
             
             # Discord message
             failed_players = []
-            for item in results:
+            for idx, item in enumerate(results):
+                # We want to keep track of names for human readability
+                page_nick = item.get("page_player_nick")
+                stored_nick = item.get("stored_player_nick")
+                if page_nick and stored_nick != page_nick:
+                    players[idx]["player_nick"] = page_nick
+                    updated = True
+
                 success = item.get("success")
                 if success:
                     continue
+                
                 result = item.get("result", {})
                 player_id = item.get("player_id", "Unknown")
                 player_nick = result.get("player_nick", "N/A")
@@ -54,6 +69,9 @@ def init_bot(token: str) -> discord.Client:
             
             response_message = f"🎁 **Redeem Results for `{gift_code}`**\n📋`{len(results) - failed}/{len(results)}` succeeded!\n\n"
             response_message += "\n".join(failed_players)
+            if updated:
+                save_players(players)
+                response_message += "\n\n💾 Updated player names from page"
             
             # Discord message limit safety
             if len(response_message) > 1900:

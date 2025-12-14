@@ -34,7 +34,7 @@ async def perform_giftcode_redeem(player_id: str, gift_code: str, page: Any) -> 
         except Exception:
             pass
 
-async def redeem_giftcode_for_all_players(player_ids: List[str], gift_code: str) -> List[Dict[str, Any]]:
+async def redeem_giftcode_for_all_players(players: List[Dict[str, str]], gift_code: str) -> List[Dict[str, Any]]:
     results: List[Dict[str, Any]] = []
 
     async with async_playwright() as p:
@@ -43,9 +43,20 @@ async def redeem_giftcode_for_all_players(player_ids: List[str], gift_code: str)
 
         await page.goto("https://ks-giftcode.centurygame.com/")
 
-        for player_id in player_ids:
+        for player in players:
+            player_id = player.get("player_id", "")
+            stored_nick = player.get("player_nick")
+
             result = await perform_giftcode_redeem(player_id, gift_code, page)
-            results.append({"player_id": player_id, "result": result, "success": result.get("success", False)})
+            page_nick = result.get("player_nick")
+
+            results.append({
+                "player_id": player_id,
+                "stored_player_nick": stored_nick,
+                "page_player_nick": page_nick,
+                "result": result,
+                "success": result.get("success", False),
+            })
 
         await browser.close()
         return results
