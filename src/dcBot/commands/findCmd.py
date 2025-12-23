@@ -5,7 +5,7 @@ from typing import Callable, List, Dict, Any
 
 def register_find_command(
     tree: app_commands.CommandTree,
-    load_players: Callable[[], List[Dict[str, Any]]],
+    bot_data: Dict[str, Any],
 ):
     @tree.command(name="find", description="Find a player by ID or nickname")
     @app_commands.describe(query="Player ID or nickname (partial match supported)")
@@ -13,7 +13,7 @@ def register_find_command(
         await interaction.response.defer(thinking=True)
 
         try:
-            players = load_players()
+            players = bot_data.get("players", [])
             query_lower = query.lower()
 
             matches: List[Dict[str, Any]] = [

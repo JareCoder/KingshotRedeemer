@@ -58,7 +58,7 @@ class PlayerListView(discord.ui.View):
 
 def register_list_command(
     tree: app_commands.CommandTree,
-    load_players: Callable[[], List[Dict[str, Any]]],
+    bot_data: Dict[str, Any],
 ):
 
     @tree.command(name="list", description="List all registered players")
@@ -66,7 +66,7 @@ def register_list_command(
         await interaction.response.defer(thinking=True)
 
         try:
-            players = load_players()
+            players = bot_data.get("players", [])
 
             if not players:
                 await interaction.followup.send("❌ No players registered.")

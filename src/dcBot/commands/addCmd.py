@@ -7,9 +7,8 @@ from dcBot.permissions import check_permissions
 
 def register_add_command(
     tree: app_commands.CommandTree,
-    load_players: Callable[[], List[Dict[str, Any]]],
-    save_players: Callable[[List[Dict[str, Any]]], None],
     bot_data: Dict[str, Any],
+    save_bot_data: Callable[[Dict[str, Any]], None],
 ):
     @tree.command(name="add", description="Add a new player by ID")
     @app_commands.describe(player_id="The player ID to add")
@@ -23,7 +22,7 @@ def register_add_command(
         await interaction.response.defer(thinking=True)
 
         try:
-            players = load_players()
+            players = bot_data.get("players", [])
 
             existing = next(
                 (p for p in players if p.get("player_id") == player_id), None
@@ -36,7 +35,8 @@ def register_add_command(
 
             new_player = {"player_id": player_id, "player_nick": f"Player {player_id}"}
             players.append(new_player)
-            save_players(players)
+            bot_data["players"] = players
+            save_bot_data(bot_data)
 
             await interaction.followup.send(
                 f"✅ Added player `{player_id}` with placeholder nick `Player {player_id}`.\n"

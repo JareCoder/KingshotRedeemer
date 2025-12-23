@@ -8,9 +8,8 @@ from dcBot.permissions import check_permissions
 
 def register_redeem_command(
     tree: app_commands.CommandTree,
-    load_players: Callable[[], List[Dict[str, Any]]],
-    save_players: Callable[[List[Dict[str, Any]]], None],
     bot_data: Dict[str, Any],
+    save_bot_data: Callable[[Dict[str, Any]], None],
 ):
 
     @tree.command(
@@ -34,7 +33,7 @@ def register_redeem_command(
         await interaction.response.defer(thinking=True)
 
         try:
-            all_players = load_players()
+            all_players = bot_data.get("players", [])
             players_to_redeem = all_players
 
             if player_id:
@@ -90,7 +89,8 @@ def register_redeem_command(
             )
             response_message += "\n".join(failed_players)
             if updated:
-                save_players(all_players)
+                bot_data["players"] = all_players
+                save_bot_data(bot_data)
                 response_message += "\n\n💾 Updated player names from Kingshot page"
 
             if len(response_message) > 1900:
