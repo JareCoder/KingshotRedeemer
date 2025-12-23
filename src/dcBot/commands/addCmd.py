@@ -2,15 +2,24 @@ import discord
 from discord import app_commands
 from typing import Callable, List, Dict, Any
 
+from dcBot.permissions import check_permissions
+
 
 def register_add_command(
     tree: app_commands.CommandTree,
     load_players: Callable[[], List[Dict[str, Any]]],
     save_players: Callable[[List[Dict[str, Any]]], None],
+    bot_data: Dict[str, Any],
 ):
     @tree.command(name="add", description="Add a new player by ID")
     @app_commands.describe(player_id="The player ID to add")
     async def add_player(interaction: discord.Interaction, player_id: str):
+        
+        permission_error = check_permissions(interaction, bot_data)
+        if permission_error:
+            await interaction.response.send_message(permission_error, ephemeral=True)
+            return
+        
         await interaction.response.defer(thinking=True)
 
         try:

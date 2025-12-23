@@ -2,17 +2,26 @@ import discord
 from discord import app_commands
 from typing import Callable, List, Dict, Any
 
+from dcBot.permissions import check_permissions
+
 
 def register_remove_command(
     tree: app_commands.CommandTree,
     load_players: Callable[[], List[Dict[str, Any]]],
     save_players: Callable[[List[Dict[str, Any]]], None],
+    bot_data: Dict[str, Any],
 ):
     @tree.command(name="remove", description="Remove a player by ID or name")
     @app_commands.describe(
         query="Player ID or nickname to remove (partial match supported)"
     )
     async def remove_player(interaction: discord.Interaction, query: str):
+        
+        permission_error = check_permissions(interaction, bot_data)
+        if permission_error:
+            await interaction.response.send_message(permission_error, ephemeral=True)
+            return
+        
         await interaction.response.defer(thinking=True)
 
         try:

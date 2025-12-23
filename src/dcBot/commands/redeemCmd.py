@@ -3,12 +3,14 @@ from discord import app_commands
 from typing import Callable, List, Dict, Any, Optional
 
 from browser_automation.redeem import redeem_giftcode_for_all_players
+from dcBot.permissions import check_permissions
 
 
 def register_redeem_command(
     tree: app_commands.CommandTree,
     load_players: Callable[[], List[Dict[str, Any]]],
     save_players: Callable[[List[Dict[str, Any]]], None],
+    bot_data: Dict[str, Any],
 ):
 
     @tree.command(
@@ -24,6 +26,11 @@ def register_redeem_command(
         gift_code: str,
         player_id: Optional[str] = None,
     ):
+        permission_error = check_permissions(interaction, bot_data)
+        if permission_error:
+            await interaction.response.send_message(permission_error, ephemeral=True)
+            return
+
         await interaction.response.defer(thinking=True)
 
         try:
