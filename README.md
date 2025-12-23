@@ -8,6 +8,7 @@ A Discord bot that automates gift code redemption for Kingshot players using bro
 - 🤖 **Browser Automation** - Uses Playwright for reliable web interaction
 - 💾 **Auto-Sync Player Names** - Player nicknames automatically update from the offician redeeming site
 - 📋 **Player Management** - Add, remove, search, and list players
+- 🔄 **Auto-Update Check** - Automatically checks for new Docker image versions every 24h
 - 🐳 **Docker Ready** - Easy deployment with Docker/Docker Compose
 - 🔄 **Cross-Platform** - Supports AMD64 and ARM64 architectures
 
@@ -106,11 +107,12 @@ docker-compose logs -f
 
 | Command | Description | Example |
 |---------|-------------|----------|
+| `/setup <channel> <role>` | Configure update notifications channel and admin role | `/setup #my-channel @KingshotAdmin` |
 | `/redeem <gift_code>` | Redeem a gift code for all registered players | `/redeem KSFB15K` |
-| `/add <player_id>` | Add a new player by their Kingshot ID | `/add 48666532` |
+| `/add <player_id>` | Add a new player by their Kingshot ID | `/add 123456789` |
 | `/remove <query>` | Remove a player by ID or nickname | `/remove Jareggie` |
 | `/list` | View all registered players (paginated, 10 per page) | `/list` |
-| `/find <query>` | Search for a player by ID or nickname | `/find 48666532` |
+| `/find <query>` | Search for a player by ID or nickname | `/find 123456789` |
 | `/help` | Display all available commands and usage | `/help` |
 
 ## Environment Variables
@@ -122,21 +124,21 @@ docker-compose logs -f
 
 ## Data Persistence
 
-Player data is stored in `/app/data/players.json` inside the container. The Docker volume `kingshot-data` ensures your player list persists across:
+Bot data (including players and configuration) is stored in `/app/data/botData.json` inside the container. The Docker volume `kingshot-data` ensures your data persists across:
 - Container restarts
 - Bot updates
 - System reboots
 
-### Backup Player Data
+### Backup Data
 
 ```bash
-# Export player data
+# Export bot data
 docker run --rm -v kingshot-data:/data -v $(pwd):/backup \
-  alpine tar czf /backup/players-backup.tar.gz -C /data .
+  alpine tar czf /backup/bot-data-backup.tar.gz -C /data .
 
-# Restore player data
+# Restore bot data
 docker run --rm -v kingshot-data:/data -v $(pwd):/backup \
-  alpine tar xzf /backup/players-backup.tar.gz -C /data
+  alpine tar xzf /backup/bot-data-backup.tar.gz -C /data
 ```
 
 ## Troubleshooting
