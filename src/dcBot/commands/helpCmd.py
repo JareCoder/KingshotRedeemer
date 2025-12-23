@@ -22,13 +22,23 @@ def register_help_command(tree: app_commands.CommandTree, bot_data):
             )
 
             embed.add_field(
-                name="🎁 /redeem <gift_code>",
+                name="⚙️ /setup <channel> <admin_role>",
                 value=(
-                    "Redeem a Kingshot gift code for all registered players.\n"
-                    "**Example:** `/redeem KSFB15K`\n"
-                    "• Automatically redeems for all players\n"
+                    "Configure the allowed channel and admin role. Must be run once before other commands.\n"
+                    "• Requires bot admin permissions\n"
+                    "• Example: `/setup #redeem @Kingshot Admins`"
+                ),
+                inline=False,
+            )
+
+            embed.add_field(
+                name="🎁 /redeem <gift_code> [player_id]",
+                value=(
+                    "Redeem a Kingshot gift code for all players or a single player ID.\n"
+                    "**Examples:** `/redeem KSFB15K` or `/redeem KSFB15K 48666532`\n"
                     "• Updates player nicknames from the game\n"
-                    "• Shows success/failure for each player"
+                    "• Shows success/failure for each player\n"
+                    "• Requires bot admin permissions"
                 ),
                 inline=False,
             )
@@ -41,6 +51,7 @@ def register_help_command(tree: app_commands.CommandTree, bot_data):
                     "• Checks if player already exists\n"
                     "• Creates placeholder nickname\n"
                     "• Nickname auto-updates on first redemption"
+                    "• Requires bot admin permissions"
                 ),
                 inline=False,
             )
@@ -50,8 +61,9 @@ def register_help_command(tree: app_commands.CommandTree, bot_data):
                 value=(
                     "Remove a player by ID or nickname.\n"
                     "**Examples:**\n"
-                    "• `/remove 48666532` (exact ID)\n"
-                    "• `/remove Jareggie` (partial nickname match)"
+                    "• `/remove 123456789` (exact ID)\n"
+                    "• `/remove Jareggie` (partial nickname match)\n"
+                    "• Requires bot admin permissions"
                 ),
                 inline=False,
             )
