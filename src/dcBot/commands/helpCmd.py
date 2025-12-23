@@ -92,6 +92,16 @@ def register_help_command(tree: app_commands.CommandTree, bot_data):
             )
 
             embed.add_field(
+                name="🔄 Auto-Update Check",
+                value=(
+                    "The bot automatically checks for updates on Docker Hub every 24 hours.\n"
+                    "• Notifications are sent to the configured channel\n"
+                    "• Checks against `jarecoder/kingshot-redeemer:latest`"
+                ),
+                inline=False,
+            )
+
+            embed.add_field(
                 name="❓ /help",
                 value="Display this help message.",
                 inline=False,
