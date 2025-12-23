@@ -2,6 +2,8 @@ import discord
 from discord import app_commands
 from typing import Callable, List, Dict, Any
 
+from dcBot.permissions import ensure_bot_setup
+
 
 def register_find_command(
     tree: app_commands.CommandTree,
@@ -10,6 +12,11 @@ def register_find_command(
     @tree.command(name="find", description="Find a player by ID or nickname")
     @app_commands.describe(query="Player ID or nickname (partial match supported)")
     async def find_player(interaction: discord.Interaction, query: str):
+        setup_error = ensure_bot_setup(bot_data)
+        if setup_error:
+            await interaction.response.send_message(setup_error, ephemeral=True)
+            return
+
         await interaction.response.defer(thinking=True)
 
         try:

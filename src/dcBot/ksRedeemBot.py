@@ -40,7 +40,7 @@ def init_bot(token: str) -> discord.Client:
     register_add_command(tree, bot_data, save_bot_data_with_players)
     register_remove_command(tree, bot_data, save_bot_data_with_players)
     register_find_command(tree, bot_data)
-    register_help_command(tree)
+    register_help_command(tree, bot_data)
     register_setup_command(tree, save_bot_data_with_players, bot_data)
     
     @client.event

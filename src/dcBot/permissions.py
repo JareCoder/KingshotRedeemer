@@ -1,13 +1,30 @@
 import discord
 from typing import Dict, Any
 
-def check_permissions(interaction: discord.Interaction, bot_data: Dict[str, Any]) -> str:
+
+SETUP_INCOMPLETE_MESSAGE = "Bot setup is not complete. Please use `/setup` to configure the bot."
+
+
+def ensure_bot_setup(bot_data: Dict[str, Any]) -> str:
+    """Returns an error message if setup data is missing, otherwise empty string."""
     bot_config = bot_data.get("botConfig", {})
     allowed_channel_id = bot_config.get("allowed_channel")
     admin_role_id = bot_config.get("admin_role")
 
     if not allowed_channel_id or not admin_role_id:
-        return "Bot setup is not complete. Please use `/setup` to configure the bot."
+        return SETUP_INCOMPLETE_MESSAGE
+
+    return ""
+
+
+def check_permissions(interaction: discord.Interaction, bot_data: Dict[str, Any]) -> str:
+    setup_error = ensure_bot_setup(bot_data)
+    if setup_error:
+        return setup_error
+
+    bot_config = bot_data.get("botConfig", {})
+    allowed_channel_id = bot_config.get("allowed_channel")
+    admin_role_id = bot_config.get("admin_role")
 
     if interaction.channel.id != allowed_channel_id:
         allowed_channel = interaction.guild.get_channel(allowed_channel_id)
