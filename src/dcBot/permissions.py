@@ -6,7 +6,6 @@ SETUP_INCOMPLETE_MESSAGE = "Bot setup is not complete. Please use `/setup` to co
 
 
 def ensure_bot_setup(bot_data: Dict[str, Any]) -> str:
-    """Returns an error message if setup data is missing, otherwise empty string."""
     bot_config = bot_data.get("botConfig", {})
     allowed_channel_id = bot_config.get("allowed_channel")
     admin_role_id = bot_config.get("admin_role")
