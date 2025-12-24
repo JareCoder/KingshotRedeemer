@@ -1,4 +1,6 @@
 # Data directory (managed by volume)
+data/
+# Legacy
 src/data/
 
 # Python cache

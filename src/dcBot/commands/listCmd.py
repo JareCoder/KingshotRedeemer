@@ -2,6 +2,8 @@ import discord
 from discord import app_commands
 from typing import Callable, List, Dict, Any
 
+from dcBot.permissions import ensure_bot_setup
+
 
 class PlayerListView(discord.ui.View):
     def __init__(self, players: List[Dict[str, Any]], page: int = 0):
@@ -58,15 +60,20 @@ class PlayerListView(discord.ui.View):
 
 def register_list_command(
     tree: app_commands.CommandTree,
-    load_players: Callable[[], List[Dict[str, Any]]],
+    bot_data: Dict[str, Any],
 ):
 
     @tree.command(name="list", description="List all registered players")
     async def list_players(interaction: discord.Interaction):
+        setup_error = ensure_bot_setup(bot_data)
+        if setup_error:
+            await interaction.response.send_message(setup_error, ephemeral=True)
+            return
+
         await interaction.response.defer(thinking=True)
 
         try:
-            players = load_players()
+            players = bot_data.get("players", [])
 
             if not players:
                 await interaction.followup.send("❌ No players registered.")

@@ -1,4 +1,5 @@
-players.json
+*.json
+!example*.json
 .env
 *.png
 __pycache__/

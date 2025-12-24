@@ -1,10 +1,17 @@
 import discord
 from discord import app_commands
 
+from dcBot.permissions import ensure_bot_setup
 
-def register_help_command(tree: app_commands.CommandTree):
+
+def register_help_command(tree: app_commands.CommandTree, bot_data):
     @tree.command(name="help", description="Display all available commands and usage")
     async def help_command(interaction: discord.Interaction):
+        setup_error = ensure_bot_setup(bot_data)
+        if setup_error:
+            await interaction.response.send_message(setup_error, ephemeral=True)
+            return
+
         await interaction.response.defer(thinking=True)
 
         try:
@@ -15,13 +22,23 @@ def register_help_command(tree: app_commands.CommandTree):
             )
 
             embed.add_field(
-                name="🎁 /redeem <gift_code>",
+                name="⚙️ /setup <channel> <admin_role>",
                 value=(
-                    "Redeem a Kingshot gift code for all registered players.\n"
-                    "**Example:** `/redeem KSFB15K`\n"
-                    "• Automatically redeems for all players\n"
+                    "Configure the allowed channel and admin role. Must be run once before other commands.\n"
+                    "• Requires bot admin permissions\n"
+                    "• Example: `/setup #redeem @Kingshot Admins`"
+                ),
+                inline=False,
+            )
+
+            embed.add_field(
+                name="🎁 /redeem <gift_code> [player_id]",
+                value=(
+                    "Redeem a Kingshot gift code for all players or a single player ID.\n"
+                    "**Examples:** `/redeem KSFB15K` or `/redeem KSFB15K 48666532`\n"
                     "• Updates player nicknames from the game\n"
-                    "• Shows success/failure for each player"
+                    "• Shows success/failure for each player\n"
+                    "• Requires bot admin permissions"
                 ),
                 inline=False,
             )
@@ -34,6 +51,7 @@ def register_help_command(tree: app_commands.CommandTree):
                     "• Checks if player already exists\n"
                     "• Creates placeholder nickname\n"
                     "• Nickname auto-updates on first redemption"
+                    "• Requires bot admin permissions"
                 ),
                 inline=False,
             )
@@ -43,8 +61,9 @@ def register_help_command(tree: app_commands.CommandTree):
                 value=(
                     "Remove a player by ID or nickname.\n"
                     "**Examples:**\n"
-                    "• `/remove 48666532` (exact ID)\n"
-                    "• `/remove Jareggie` (partial nickname match)"
+                    "• `/remove 123456789` (exact ID)\n"
+                    "• `/remove Jareggie` (partial nickname match)\n"
+                    "• Requires bot admin permissions"
                 ),
                 inline=False,
             )
@@ -68,6 +87,16 @@ def register_help_command(tree: app_commands.CommandTree):
                     "• `/find 48666532` (exact ID)\n"
                     "• `/find Syde` (partial nickname match)\n"
                     "• Shows up to 10 matching results"
+                ),
+                inline=False,
+            )
+
+            embed.add_field(
+                name="🔄 Auto-Update Check",
+                value=(
+                    "The bot automatically checks for updates on Docker Hub every 24 hours.\n"
+                    "• Notifications are sent to the configured channel\n"
+                    "• Checks against `jarecoder/kingshot-redeemer:latest`"
                 ),
                 inline=False,
             )

@@ -1,0 +1,17 @@
+{
+    "botConfig": {
+        "allowed_channel": 123456789,
+        "admin_role": 987654321,
+        "last_docker_digest": "sha256:exampledigest"
+    },
+    "players": [
+        {
+            "player_id": "123456789",
+            "player_nick": "PlayerOne"
+        },
+        {
+            "player_id": "987654321",
+            "player_nick": "PlayerTwo"
+        }
+    ]
+}
