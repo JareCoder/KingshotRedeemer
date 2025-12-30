@@ -1,15 +1,15 @@
 import discord
 from discord import app_commands
 
-from dcBot.permissions import ensure_bot_setup
+from dcBot.permissions import check_channel_only
 
 
 def register_help_command(tree: app_commands.CommandTree, bot_data):
     @tree.command(name="help", description="Display all available commands and usage")
     async def help_command(interaction: discord.Interaction):
-        setup_error = ensure_bot_setup(bot_data)
-        if setup_error:
-            await interaction.response.send_message(setup_error, ephemeral=True)
+        permission_error = check_channel_only(interaction, bot_data)
+        if permission_error:
+            await interaction.response.send_message(permission_error, ephemeral=True)
             return
 
         await interaction.response.defer(thinking=True)
