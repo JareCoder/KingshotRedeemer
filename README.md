@@ -2,6 +2,18 @@
 
 A Discord bot that automates gift code redemption for Kingshot players using browser automation. Redeem codes for multiple accounts simultaneously with a single command.
 
+# IMPORTANT Backup Your Data!
+The migration in 1.1.0 update has a major oversight for docker volumes. Please backup your data NOW to avoid data loss.
+
+```bash
+# Export bot data from a running container
+## Version 1.1.0
+docker cp kingshot-redeemer:/data/botData.json ./botData.json
+
+## Version 1.0.0
+docker cp kingshot-redeemer:/app/data/players.json ./players.json
+```
+
 ## Features
 
 - 🎁 **Bulk Redemption** - Redeem gift codes for all registered players at once
@@ -129,17 +141,7 @@ Bot data (including players and configuration) is stored in `/app/data/botData.j
 - Bot updates
 - System reboots
 
-### Backup Data
 
-```bash
-# Export bot data
-docker run --rm -v kingshot-data:/data -v $(pwd):/backup \
-  alpine tar czf /backup/bot-data-backup.tar.gz -C /data .
-
-# Restore bot data
-docker run --rm -v kingshot-data:/data -v $(pwd):/backup \
-  alpine tar xzf /backup/bot-data-backup.tar.gz -C /data
-```
 
 ## Troubleshooting
 
