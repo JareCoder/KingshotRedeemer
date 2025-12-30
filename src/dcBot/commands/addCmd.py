@@ -1,6 +1,6 @@
 import discord
 from discord import app_commands
-from typing import Callable, List, Dict, Any
+from typing import Callable, Dict, Any
 
 from dcBot.permissions import check_permissions
 

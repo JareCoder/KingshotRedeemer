@@ -1,6 +1,6 @@
 import discord
 from discord import app_commands
-from typing import Callable, List, Dict, Any, Optional
+from typing import Callable, Dict, Any, Optional
 
 from browser_automation.redeem import redeem_giftcode_for_all_players
 from dcBot.permissions import check_permissions
