@@ -40,7 +40,7 @@ docker run -d \
   --name kingshot-redeemer \
   -e DISCORD_TOKEN=your_discord_token_here \
   -e TIMEOUT_MS=500 \
-  -v kingshot-data:/app/data \
+  -v kingshot-data:/data \
   --restart unless-stopped \
   jarecoder/kingshot-redeemer:latest
 ```
@@ -61,7 +61,7 @@ services:
       - DISCORD_TOKEN=${DISCORD_TOKEN}
       - TIMEOUT_MS=${TIMEOUT_MS}
     volumes:
-      - kingshot-data:/app/data
+      - kingshot-data:/data
 
 volumes:
   kingshot-data:
